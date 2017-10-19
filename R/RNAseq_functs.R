@@ -111,9 +111,10 @@ my.plot.callback <- function(x) {
 #'
 NULL
 #' @export
+#' @importFrom tsne tsne
 
-run.tsne <- function(my.dist, plot.callback=my.plot.callback, k=3, max_iter=5000, ...) {
-    require(tsne)
+run.tsne <- function(my.dist, plot.callback=my.plot.callback, k=3, max_iter=5000, seed = 728398230, ...) {
+    set.seed(seed)
     my.tsne <- tsne(my.dist, k=k, epoch_callback=plot.callback, initial_dims=50, max_iter=max_iter, ...)
     rownames(my.tsne) <- rownames(my.dist)
     my.tsne
