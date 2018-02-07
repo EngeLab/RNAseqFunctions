@@ -445,7 +445,7 @@ plot.nice <- function(layout, gene.vals, genes, pal=NULL, maxVal=NULL, cex=1, ri
         require(RColorBrewer)
         pal <- brewer.pal(9, "Set1")
     }
-    targets <- pal[1:length(genes)]
+    targets <- pal[1:length(genes)] #this will fail if the genes arg has length(genes) > 9
     values <- gene.vals[genes,]
     if(!is.null(maxVal)) {
         if(maxVal < 1) {
