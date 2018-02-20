@@ -1,7 +1,12 @@
 Package: RNAseqFunctions
 Title: RNA sequencing functions for the Enge lab
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Martin", "Enge", email = "Martin.enge@ki.se", role = c("aut", "cre")),
+    person("Jason T.", "Serviss", email = "Jason.serviss@ki.se", role = c("aut"))
+    )
+Author: Martin Enge [aut, cre],
+  Jason T. Serviss [aut]
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.1)
 Imports:
