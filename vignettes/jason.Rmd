@@ -1,0 +1,223 @@
+---
+title: "Typical workflow for filtering counts data"
+author: "Jason Serviss"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+```{r setup, include = FALSE}
+library(RNAseqFunctions)
+library(tidyverse)
+```
+
+The vignette is designed to show a typical pipeline for filtering 
+counts data. Example data mirroring output from HTSeq is included and called 
+"testingCounts" and this will be used for demonstration purposes.
+
+```{r}
+testingCounts[, 1:5]
+```
+
+### Move gene name column to rownames
+
+The column called HGN, indicating the gene names is included in HTSeq counts
+file but we typically want gene names as rownames. The function 
+`moveGenesToRownames` accomplishes this and returns the modified data.frame.
+
+```{r}
+counts <- moveGenesToRownames(testingCounts)
+counts[, 1:5]
+```
+
+### Remove .htseq suffix from sample names
+
+HTSeq adds the suffix ".htseq" to column names when it reports counts. This
+function removes that suffix from the column names of the supplied counts
+data.frame.
+
+```{r}
+counts <- removeHTSEQsuffix(counts)
+counts[, 1:5]
+```
+
+### Extract ERCC reads
+
+ERCC reads, when present in the experiment, are included in HTSeq output as 
+genes although, we typically want these to be in a seperate data structure. The
+`detectERCCreads` function searches the rownames for gene names (the rownames
+of the input data.frame) matching the specified regular expression and returns 
+a logical indicating where they are found. The default regular expression for 
+matching is "^ERCC\\-[0-9]*$". The returned logical vector can be subsequently 
+used to subset the ERCC reads from the counts matrix and vice versa. Typically, 
+we expect 92 ERCC reads to be identified and, if they are not, a warning is 
+issued.
+
+```{r}
+ercc <- detectERCCreads(counts)
+countsERCC <- counts[ercc, ]
+counts <- counts[!ercc, ]
+counts[, 1:5]
+countsERCC[, 1:5]
+```
+
+### Remove HTSeq statistics
+
+HTSeq typically reports the following information in the last rows of the counts
+data: "__no_feature", "__ambiguous", "__too_low_aQual", "__not_aligned", 
+"__alignment_not_unique". Although this is useful information it is not usually 
+desired to retain this in downstream processing. The `detectNonGenes` function
+finds these rows and returns a logical vector allowing them to be removed.
+
+```{r}
+counts <- counts[!detectNonGenes(counts), ]
+counts[, 1:5]
+```
+
+### Remove low quality genes
+
+In gene expression counts data if can often be the case that some genes are
+not detected. This can simply be due to the fact that the gene is not
+expressed in the tissue or, in addition, that the sequencing depth was not
+sufficient to detect the gene. In addition, some genes may be detected but in
+so few samples or at such a low level that it makes the quantified value
+highly unreliable. In these cases, it is desireable to remove the gene before
+downstream analysis which is facilitated by the `detectLowQualityGenes` 
+function. A message is issued indicating the number of low quality genes 
+detected and the percentage of low quality genes for the dataset.
+
+```{r}
+counts <- counts[detectLowQualityGenes(counts, 18), ]
+counts[, 1:5]
+```
+
+### Remove low quality samples
+
+It is often the case that some samples from sequencing experiments are of
+low quality, in some cases due to issues during the sample preperation stage.
+Due to the fact that these samples represent a high level of technical noise,
+it is often desirable to remove these before downstream analysis which is
+facilitated by the `detectLowQualityCells` function. The function achieves this 
+using two methods.First, the mincount argument allows detection of samples whose 
+sum across all genes is > mincount. Second, we utilize a house keeping gene and 
+assume its log2 expression to be normally distributed when considering all 
+samples. We then detect samples where the probability of the expression for the 
+house keeping gene in that sample is greater than the quantile.cut argument.
+The function returns a logical vector indicating cells that "pass" both of the 
+tests that can subsequently be used to subset them from the counts matrix. A
+message is issued indicating the number of low quality cells detected and the
+percentage of low quality cells in the dataset.
+
+```{r}
+lqc <- detectLowQualityCells(
+  counts,
+  geneName = "ACTB",
+  mincount = 30,
+  quantileCut = 0.01
+)
+
+counts <- counts[, lqc]
+countsERCC <- countsERCC[, lqc]
+
+counts[, 1:5]
+countsERCC[, 1:5]
+```
+
+### Coerce to matrix
+
+Due to the fact that, when origionally loaded, the counts data includes a 
+character column (HGN) they are typically stored in a data.frame. Despite this,
+downstream processing is usually easier when the data are in a matrix 
+data structure. The `convertCountsToMatrix` coreces the counts data to a matrix.
+
+```{r}
+counts <- convertCountsToMatrix(counts)
+countsERCC <- convertCountsToMatrix(countsERCC)
+
+class(counts)
+class(countsERCC)
+```
+
+### Counts filtering summary 
+
+In summary the whole workflow can be reduced to the pipeline shown below. Note
+that order of operations is important.
+
+```{r}
+counts <- testingCounts %>%
+  moveGenesToRownames() %>%
+  removeHTSEQsuffix()
+
+ercc <- detectERCCreads(counts, warn = FALSE)
+
+filtered.counts <- counts[!ercc, ] %>%
+  subset(!detectNonGenes(.)) %>%
+  subset(detectLowQualityGenes(., 18)) %>%
+  select(which(
+    detectLowQualityCells(
+      ., geneName = "ACTB", mincount = 30, quantileCut = 0.01
+    )
+  )) %>%
+  convertCountsToMatrix(.)
+
+countsERCC <- convertCountsToMatrix(counts[ercc, colnames(filtered.counts)])
+```
+
+## Metadata
+
+In addition to the functions already mentioned, there is a subset of functions 
+devoted to helping with metadata. Since the metadata tends to be quite specific
+depending on the project, it is difficult to write generalized functions to help
+with metadata. Despite this, some things are assumed to be shared between all 
+projects. The functions below leverage a sample naming convention to
+annotate various metadata. In the future, these functions may be updated to be
+more useful in projects using a different sample naming convention. A example of
+a metadata file is included as "testingMeta" and includes sample names with the 
+typical format. The naming convention for samples is as follows:
+
+Sample names should follow: (s|m)\\\\.platename\\\\.platePosition.
+platePosition is in the form row and column without a space where row is a
+LETTER (A-H) and column is a number (1-12).
+
+```{r}
+testingMeta
+```
+
+
+### Annotate Plate
+
+Uses the standard sample naming nomenclature to add plate row to metadata.
+Returns the metadata tibble with an additional column indicating plate name.
+
+
+```{r}
+meta <- annotatePlate(testingMeta)
+meta
+```
+
+### Annotate Row
+
+Uses the standard sample naming nomenclature to add plate row to metadata.
+Returns the metadata tibble with an additional column indicating row as a
+numeric value.
+
+```{r}
+meta <- annotateRow(meta)
+meta
+```
+
+### Annotate column
+
+Uses the standard sample naming nomenclature to add plate column to metadata.
+Returns the metadata tibble with an additional column indicating column as a
+numeric value.
+
+```{r}
+meta <- annotateColumn(meta)
+meta
+```
+

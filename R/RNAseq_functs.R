@@ -14,13 +14,13 @@ NULL
 #' @importFrom grDevices colorRampPalette
 
 jet.colors <- function() {
-    colorRampPalette(
+  colorRampPalette(
     c(
-    "#00007F", "blue", "#007FFF",
-    "cyan", "#7FFF7F", "yellow",
-    "#FF7F00", "red", "#7F0000"
+      "#00007F", "blue", "#007FFF",
+      "cyan", "#7FFF7F", "yellow",
+      "#FF7F00", "red", "#7F0000"
     )
-    )
+  )
 }
 
 
@@ -28,7 +28,7 @@ jet.colors <- function() {
 #'
 #' @name norm.log.counts
 #' @rdname norm.log.counts
-#' @param counts Enter description.
+#' @param counts Counts matrix with genes as rows and samples as columns.
 #' @author Martin Enge
 #' @examples
 #'
@@ -39,10 +39,8 @@ NULL
 #' @export
 
 norm.log.counts <- function(counts) {
-    norm.fact <- colSums(counts)
-    counts.norm <- t( apply(counts, 1, function(x) {x/norm.fact*1000000+1}))
-    counts.log <- log2(counts.norm)
-    counts.log
+  cpm <- t(t(counts) / colSums(counts) * 10^6 + 1)
+  log2(cpm)
 }
 
 #' load.count.data
@@ -91,10 +89,6 @@ load.count.data <- function(fname, mincount = 4e5, omit.bad.genes=TRUE, omit.bad
     list(counts=counts, ercc.counts=ercc.counts, last3.counts=last3.counts)
 }
 
-my.plot.callback <- function(x) {
-    plot(x)
-}
-
 #' run.tsne
 #'
 #' @name run.tsne
@@ -118,6 +112,10 @@ run.tsne <- function(my.dist, plot.callback=my.plot.callback, k=3, max_iter=5000
     my.tsne <- tsne(my.dist, k=k, epoch_callback=plot.callback, initial_dims=50, max_iter=max_iter, ...)
     rownames(my.tsne) <- rownames(my.dist)
     my.tsne
+}
+
+my.plot.callback <- function(x) {
+  plot(x)
 }
 
 #' geneset.colors
@@ -370,7 +368,9 @@ NULL
 #' @export
 
 revcomp <- function(dna) {
-    sapply(strsplit(chartr("ATGC", "TACG", dna), NULL), function(x) {paste(rev(x), collapse='')})
+    sapply(strsplit(chartr("ATGC", "TACG", dna), NULL), function(x){
+      paste(rev(x), collapse='')
+    })
 }
 
 #' col.from.targets

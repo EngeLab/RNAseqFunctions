@@ -4,7 +4,7 @@
 \alias{norm.log.counts}
 \title{norm.log.counts}
 \arguments{
-\item{counts}{Enter description.}
+\item{counts}{Counts matrix with genes as rows and samples as columns.}
 }
 \description{
 norm.log.counts
