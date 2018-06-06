@@ -8,7 +8,7 @@ Authors@R: c(
 Author: Martin Enge [aut, cre],
   Jason T. Serviss [aut]
 Description: What the package does (one paragraph).
-Depends: R (>= 3.4.1)
+Depends: R (>= 3.4.0)
 Imports:
     grDevices,
     tsne
