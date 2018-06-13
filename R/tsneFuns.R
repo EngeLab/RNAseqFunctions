@@ -32,7 +32,7 @@ pearsonsCor <- function(cpm, select = NULL) {
 #' @rdname runTsne
 #' @aliases runTsne
 #' @param my.dist A distance object typically produced with
-#'  the \code{\link{pearsonsDist}} function.
+#'  the \code{\link{pearsonsCor}} function.
 #' @param dims Argument to Rtsne. Numeric indicating the output dimensions.
 #' @param theta Argument to
 #'    [Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).

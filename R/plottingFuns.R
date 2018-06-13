@@ -6,7 +6,7 @@
 #' @rdname plotTsne
 #' @author Jason T. Serviss
 #' @param tsne matrix; Output from \code{\link{runTsne}} function.
-#' @param counts.cpm matrix; Matrix of counts per million with samples as
+#' @param counts.log matrix; Matrix of log2 counts per million with samples as
 #'  columns and genes as rows.
 #' @param markers character; The markers to evaluate. Must be present in
 #'  rownames(counts.cpm).
@@ -16,9 +16,14 @@
 NULL
 
 #' @rdname plotTsne
-#' @importFrom dplyr "%>%" group_by ungroup mutate arrange summarize select if_else n
+#' @export
+#' @import ggplot2
+#' @importFrom ggthemes theme_few
+#' @importFrom dplyr "%>%" rename full_join
+#' @importFrom viridis scale_colour_viridis
+#' @importFrom rlang .data
 
-plotTsne <- function(tsne, counts.cpm, markers, pal = col40() {
+plotTsne <- function(tsne, counts.log, markers = NULL, pal = col40()) {
   
   if(is.null(markers)) {
     stop("At least one marker must be provided in the markers argument.")
@@ -27,13 +32,13 @@ plotTsne <- function(tsne, counts.cpm, markers, pal = col40() {
   names(pal) <- markers
   pal <- pal[order(names(pal))]
   
-  tsne %>%
+  p <- tsne %>%
   matrix_to_tibble(.) %>%
   rename(
     `t-SNE dim 1` = .data$V1, `t-SNE dim 2` = .data$V2, Sample = .data$rowname
   ) %>%
   #add colors
-  full_join(coloursFromTargets(pal, counts.cpm, markers), by = "Sample") %>%
+  full_join(coloursFromTargets(pal, counts.log, markers), by = "Sample") %>%
   #add marker data
   full_join(processMarkers(counts.log, markers), by = "Sample") %>%
   #base plot
@@ -41,9 +46,9 @@ plotTsne <- function(tsne, counts.cpm, markers, pal = col40() {
     theme_few() +
     theme(legend.position = "top")
   
-  if(length(markers) == 0) {
+  if(is.null(markers)) {
     return(p)
-  } else if(length(markers) == 1)
+  } else if(length(markers) == 1) {
     p + geom_point(aes_string(colour = markers)) +
       scale_colour_viridis(option = "E")
   } else {
@@ -244,5 +249,5 @@ plotData <-  function(
   } else {
     as_tibble(plot[[1]]) #have a look at ggplot::fortify -> broom package
   }
-})
+}
 
