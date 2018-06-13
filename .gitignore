@@ -1,3 +1,5 @@
 *.history
 inst/doc
 .DS_Store
+.Rproj.user
+RNAseqFunctions.Rproj
