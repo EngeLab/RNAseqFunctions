@@ -236,6 +236,82 @@ detectLowQualityGenes <- function(
   return(bool)
 }
 
+#' detectLowQualityCellsByTotalCounts
+#'
+#' It is often the case that some samples from sequencing experiments are of
+#' low quality, in many cases due to issues during the sample preperation stage.
+#' Due to the fact that these samples represent a high level of technical noise,
+#' it is often desirable to remove these before downstream analysis which is
+#' facilitated by this function. The function achieves this using two methods.
+#' First, the mincount argument detects samples whose sum across all genes is >
+#' mincount. Second, we utilize a house keeping gene and assume its expression
+#' to be normally distributed. We then detect samples where the probability of
+#' the expression for the house keeping gene in that sample is greater than the
+#' quantile.cut argument.
+#'
+#' @name detectLowQualityCells
+#' @rdname detectLowQualityCells
+#' @param counts data.frame; A data frame with counts data with gene names as
+#' rownames and sample names as colnames.
+#' @param mincount numeric; A minimum colSum for which columns with a higher
+#' colSum will be detected. Default = 4e5.
+#' @param geneName character; The gene name to use for the quantile cutoff. This
+#' must be present in the rownames of the counts argument. Default is ACTB.
+#' @param quantile.cut numeric; This indicates probability at which the quantile
+#' cutoff will be calculated using the normal distribution. Default = 0.01.
+#' @return A logical vector with length = ncol(counts) that is TRUE when the
+#' counts data.frame column contains a sample with colSums > mincount.
+#' @author Jason Serviss
+#' @examples
+#'
+#' x <- runif(2e4)
+#' y <- runif(2e4, 1, 100)
+#' names <- paste0(letters, 1:2e4)
+#' counts <- data.frame(a = x, b = y, c = y, row.names = names)
+#' detectLowQualityCells(counts, geneName = "a1")
+#'
+NULL
+#' @export
+#' @importFrom stats median qnorm
+
+detectLowQualityCellsByTotalCounts <- function(
+  counts,
+  mincount = 4e5
+){
+  #input checks
+  #setup output vector
+  output <- vector(mode = "logical", length = ncol(counts))
+  names(output) <- colnames(counts)
+  
+  #colsums check
+  cs <- colSums(counts) > mincount
+  output[cs] <- TRUE
+  
+  if(sum(cs) < 2) {
+    stop("One or less samples passed the colSums check.")
+  }
+  
+  message <- paste0(
+    "Detected ", sum(!output), " low quality cells out of ", ncol(counts),
+    " cells input (", round(100 * (sum(!output) / ncol(counts)), digits = 2),
+    "%)."
+  )
+  print(message)
+  return(output)
+}
+
+plot_detectLowQualityCellsByTotalCounts <- function(count, output, mincount, binwidth) {
+  counts %>%
+  colSums(.) %>%
+  as_tibble() %>%
+  ggplot() +
+  geom_histogram(aes(value), binwidth = binwidth) +
+  geom_line(stat = "density", aes(value)) +
+  labs(x = "Column sums") +
+  theme_bw() +
+  geom_vline(xintercept = mincount, colour = "red", lty = 2)
+}
+
 #' detectLowQualityCells
 #'
 #' It is often the case that some samples from sequencing experiments are of
@@ -275,10 +351,10 @@ NULL
 #' @importFrom stats median qnorm
 
 detectLowQualityCells <- function(
-  counts,
-  mincount = 4e5,
-  geneName = 'ACTB',
-  quantileCut = 0.01
+counts,
+mincount = 4e5,
+geneName = 'ACTB',
+quantileCut = 0.01
 ){
   #input checks
   ##check that geneName is in rownames counts
@@ -311,9 +387,9 @@ detectLowQualityCells <- function(
   output[cs] <- cs[cs] & bool
   
   message <- paste0(
-    "Detected ", sum(!output), " low quality cells out of ", ncol(counts),
-    " cells input (", round(100 * (sum(!output) / ncol(counts)), digits = 2),
-    "%)."
+  "Detected ", sum(!output), " low quality cells out of ", ncol(counts),
+  " cells input (", round(100 * (sum(!output) / ncol(counts)), digits = 2),
+  "%)."
   )
   print(message)
   return(output)
