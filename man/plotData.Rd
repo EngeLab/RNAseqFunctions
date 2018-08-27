@@ -2,7 +2,6 @@
 % Please edit documentation in R/plottingFuns.R
 \name{plotData}
 \alias{plotData}
-\alias{plotData}
 \title{plotData}
 \usage{
 plotData(plot, ...)

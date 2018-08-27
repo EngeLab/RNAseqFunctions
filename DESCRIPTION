@@ -1,6 +1,6 @@
 Package: RNAseqFunctions
 Title: RNA sequencing functions for the Enge lab
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Martin", "Enge", email = "Martin.enge@ki.se", role = c("aut", "cre")),
     person("Jason T.", "Serviss", email = "Jason.serviss@ki.se", role = c("aut"))
@@ -26,10 +26,10 @@ Imports:
     stringr,
     tibble,
     tidyr
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: 
     knitr,
     rmarkdown,

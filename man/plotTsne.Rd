@@ -2,7 +2,6 @@
 % Please edit documentation in R/plottingFuns.R
 \name{plotTsne}
 \alias{plotTsne}
-\alias{plotTsne}
 \title{plotTsne}
 \usage{
 plotTsne(tsne, counts.log, markers = NULL, pal = col40())

@@ -2,7 +2,6 @@
 % Please edit documentation in R/plottingFuns.R
 \name{processMarkers}
 \alias{processMarkers}
-\alias{processMarkers}
 \title{processMarkers}
 \usage{
 processMarkers(counts.log, markers)

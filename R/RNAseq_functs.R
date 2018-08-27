@@ -212,7 +212,7 @@ NULL
 #' @export
 
 plot.coreg <- function(geneset, counts.log, my.tsne) {
-    require(rgl)
+  #require(rgl)
     for(gene in geneset) {
         #    invisible(readline(prompt="Press [enter] to continue"))
         if(!is.na(match(gene[1], rownames(counts.log))) & !is.na(match(gene[2], rownames(counts.log)))) {
@@ -440,11 +440,11 @@ col.from.targets <- function(targets, values) {
 #'
 NULL
 #' @export
+#' @importFrom RColorBrewer brewer.pal
 
 plot.nice <- function(layout, gene.vals, genes, pal=NULL, maxVal=NULL, cex=1, rim.modifier=0.85, legend.pos="bottomright", rim.col="black") {
     if(is.null(pal)) {
-        require(RColorBrewer)
-        pal <- brewer.pal(9, "Set1")
+      pal <- RColorBrewer::brewer.pal(9, "Set1")
     }
     targets <- pal[1:length(genes)] #will fail if length(genes) > 9. colorRampPalette(pal)(length(genes)) should work though.
     values <- gene.vals[genes,]

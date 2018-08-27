@@ -2,7 +2,6 @@
 % Please edit documentation in R/featureSelectionFuns.R
 \name{nTopVar}
 \alias{nTopVar}
-\alias{nTopVar}
 \title{nTopVar}
 \usage{
 nTopVar(cpm, n)
