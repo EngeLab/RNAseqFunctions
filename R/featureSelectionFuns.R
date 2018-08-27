@@ -79,6 +79,7 @@ NULL
 
 #' @importFrom e1071 svm
 #' @importFrom matrixStats rowMeans2 rowSds
+#' @importFrom stats predict
 
 nTopDeltaCV <- function(counts, n) {
   valid <- matrixStats::rowSums2(counts) > 0
@@ -86,10 +87,10 @@ nTopDeltaCV <- function(counts, n) {
   sd <- matrixStats::rowSds(counts)
   ok <- mu > 0 & sd > 0
   cv <- sd[ok] / mu[ok]
-  
+
   log2_m <- log2(mu[ok])
   log2_cv <- log2(cv)
-  
+
   svr_gamma <- 1000 / length(mu[ok])
   modelsvm <- svm(log2_cv ~ log2_m, gamma = svr_gamma)
   score <- log2_cv - predict(modelsvm, log2_m)
