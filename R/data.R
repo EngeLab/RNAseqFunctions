@@ -16,6 +16,8 @@
 #' data(testingCounts)
 "testingCounts"
 
+#' testingMeta
+#'
 #' Data for testing metadata processing functions.
 #'
 #' @title Data for testing metadata processing functions.
@@ -33,13 +35,13 @@
 #'
 "testingMeta"
 
-#' counts
+#' pro.counts
 #'
 #' A small example dataset of procesed counts.
 #'
 #' @title scRNAseq data from 3 cell lines.
 #' @docType data
-#' @name counts
+#' @name pro.counts
 #' @format Matrix counts, with:
 #' \describe{
 #' \item{rownames}{Gene names}
@@ -47,14 +49,16 @@
 #' }
 #' @keywords datasets
 #' @examples
-#' data(counts)
-"counts"
+#' data(pro.counts)
+"pro.counts"
 
+#' pro.meta
+#'
 #' Metadata for the counts dataset.
 #'
 #' @title Metadata for the counts dataset.
 #' @docType data
-#' @name testingMeta
+#' @name pro.meta
 #' @format Tibble with:
 #' \describe{
 #' \item{sample}{Sample name}
@@ -62,6 +66,6 @@
 #' }
 #' @keywords datasets
 #' @examples
-#' data(meta)
+#' data(pro.meta)
 #'
-"meta"
+"pro.meta"

@@ -3,7 +3,6 @@
 \docType{data}
 \name{testingMeta}
 \alias{testingMeta}
-\alias{meta}
 \title{Data for testing metadata processing functions.}
 \format{Tibble with:
 \describe{
@@ -13,18 +12,15 @@
 }}
 \usage{
 testingMeta
-
-meta
 }
 \description{
+testingMeta
+}
+\details{
 Data for testing metadata processing functions.
-
-Metadata for the counts dataset.
 }
 \examples{
 data(testingMeta)
-
-data(meta)
 
 }
 \keyword{datasets}

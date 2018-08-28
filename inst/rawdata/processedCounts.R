@@ -10,12 +10,12 @@ lg <- grepl("^s", colnames(countsSorted2))
 rv <- matrixStats::rowMaxs(countsSorted2[, lg])
 select <- order(rv, decreasing = TRUE)[1:2000]
 
-counts <- rbind(countsSortedERCC2[, lg], countsSorted2[select, lg]) %>%
+pro.counts <- rbind(countsSortedERCC2[, lg], countsSorted2[select, lg]) %>%
   .[, rev(order(colnames(.)))]
 
 #meta
-meta <- countsSortedMeta2 %>%
+pro.meta <- countsSortedMeta2 %>%
 filter(sample %in% colnames(countsSorted2)[lg]) %>%
 select(sample, cellTypes)
 
-save(counts, meta, file = "data/processedCounts.rda", compress = "bzip2")
+save(pro.counts, pro.meta, file = "data/processedCounts.rda", compress = "bzip2")
