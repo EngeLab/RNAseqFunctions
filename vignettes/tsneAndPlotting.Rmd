@@ -1,0 +1,136 @@
+---
+title: "Typical workflow for filtering counts data"
+author: "Jason Serviss"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+```{r setup, include = FALSE}
+library(RNAseqFunctions)
+library(tidyverse)
+```
+
+The vignette is designed to show the steps for running t-SNE and the associated 
+plotting functions available in the package. The "counts" dataset included with
+the package will be used for demonstration purposes.
+
+First we prepare the dataset by normalizing the counts to counts per million.
+
+```{r}
+counts.cpm <- cpm(pro.counts)
+```
+
+### Feature selection
+
+It is a reasonable expectation that the majority of genes expressed in a two
+cell types will not display a distinct expression pattern. Instead, it will 
+only be a subset of all the expressed genes that are cell type specific. In 
+addition, many genes are correlated in their expression patterns. Therefore, 
+when distinguishing cell types or cell states from transcriptional profiles, it
+is not useful to include many genes that exhibit the same expression profile.
+
+To reduce the gene expression space we use feature (gene) selection. This can be 
+done in many different ways. Within the package there are functions that support 
+three different types of feature selection:
+
+1. Select features based on max expression.  
+2. Select features based on variance.  
+3. Select features based on modelled [coefficient of variation](https://en.wikipedia.org/wiki/Coefficient_of_variation).  
+
+We typically use feature selection based on max expression upstream of t-SNE 
+since it has shown reasonable performance accross a variety of datasets. All of 
+the feature selection functions take a **counts per million matrix** and a
+**number of features** argument as input and return the index of the selected 
+features.
+
+```{r}
+selected_features <- nTopMax(counts.cpm, 2000)
+```
+
+We can see some of the features selected using the following code:
+
+```{r}
+head(rownames(counts.cpm)[selected_features])
+```
+
+We can extract the features from the counts matrix in the following way:
+
+```{r}
+selected <- counts.cpm[selected_features, ]
+```
+
+We can see that the feature selected dataset is now only includes 2000 
+features/genes and the origional 81 samples.
+
+```{r}
+dim(selected)
+```
+
+### Sample distance metrics
+
+t-SNE can be run on a matrix of counts or counts per million, although, it is 
+typically faster and gives better performance if is is provided with a distance 
+metric between samples. For this metric we typically use 1 - Pearson's 
+correlation which can be calculated in using the following function:
+
+```{r}
+p.dist <- pearsonsCor(selected)
+```
+
+p.dist is a matrix (specifically, a lower triangle matrix) that describes the 
+1 - Pearsons correlation between each of the samples.
+
+### t-SNE
+
+We now provide the distance matrix to the t-SNE algorithm to calculate the 
+sample representation in t-SNE space.
+
+```{r}
+tsne <- runTsne(p.dist, perplexity = 2)
+```
+
+The results include the sample names (rownames) and the placment of each sample 
+along the x (column 1) and y (column 2) axis in t-SNE space.
+
+### Plotting t-SNE results
+
+There are multiple plotting options for the t-SNE output. First, we can just 
+plot the t-SNE results without the addition of any other variables to view the 
+separations.
+
+```{r, fig.align="center", fig.width=6, fig.height=6}
+plotTsne(tsne, cpm.log2(counts.cpm))
+```
+<br></br>
+
+We can also add marker gene expression onto the t-SNE plot to see which 
+population(s) of cells express a specific marker.
+
+```{r, fig.align="center", fig.width=6, fig.height=6}
+plotTsne(tsne, cpm.log2(counts.cpm), "CD74")
+```
+<br></br>
+
+We can also provide additional marker genes (typically one per cell type) to 
+visualize their expression.
+
+```{r, fig.align="center", fig.width=6, fig.height=6}
+plotTsne(tsne, cpm.log2(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
+```
+<br></br>
+
+Finally, it may be desired to get back the data used for plotting in order to 
+modify or customize a plot. This can be achieved using the following function:
+
+```{r}
+p <- plotTsne(tsne, cpm.log2(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
+plotData(p)
+```
+
