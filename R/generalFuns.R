@@ -49,10 +49,11 @@ namedListToTibble <- function(l) {
 #'
 #' @export
 #' @importFrom tibble as_tibble rownames_to_column
+#' @importFrom rlang enquo quo_name "!!" ":="
 
 matrix_to_tibble <- function(data, rowname = "rowname", drop = FALSE) {
   if(!is.matrix(data)) stop("The 'data' argument is not a matrix")
-  if(drop) as_tibble(data)
+  if(drop) return(as_tibble(data))
   rn.quo <- enquo(rowname)
   rn <- rownames(data)
   if(is.null(rn)) rn <- 1:nrow(data)
