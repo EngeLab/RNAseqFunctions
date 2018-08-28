@@ -46,6 +46,7 @@ test_that("check .matrixCheckingAndCoercion with incorrect data.frame input", {
 ####
 #.checkNarg
 ####
+
 test_that("check .checkNarg with expected input", {
 
   #setup normal input data
@@ -81,4 +82,13 @@ test_that("check .checkNarg with n > nrow(cpm)", {
 
   #test
   expect_identical(expected, output)
+})
+
+####
+#.has_zero_range
+####
+
+test_that("check .has_zero_range with expected input", {
+  #test
+  expect_identical(.has_zero_range(rep(0, 10)))
 })

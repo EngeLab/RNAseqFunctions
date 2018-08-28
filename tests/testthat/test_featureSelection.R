@@ -1,9 +1,5 @@
 context("featureSelection")
 
-####
-#nTopVar
-####
-
 test_that("check nTopVar with expected input", {
 
   #setup input data
@@ -34,3 +30,20 @@ test_that("check nTopVar with identical varience", {
   #test
   expect_warning(nTopVar(matrix(rep(1:10, each = 2), ncol = 2), 2))
 })
+
+test_that("check nTopMax with expected input", {
+
+  #setup input data
+  set.seed(934)
+  mat <- matrix(sample(1:100, 10), ncol = 2)
+
+  #setup expected data
+  expected <- c(2L, 4L)
+
+  #run function
+  output <- nTopMax(mat, 2)
+
+  #test
+  expect_identical(expected, output)
+})
+
