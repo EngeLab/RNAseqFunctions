@@ -74,9 +74,6 @@ runTsne <- function(
   if(class(my.dist) == "dist" & !is_distance) {
     warning("my.dist is class dist and is_distance is FALSE")
   }
-  if(is.data.frame(my.dist)) {
-    my.dist <- .matrixCheckingAndCoercion(my.dist)
-  }
 
   set.seed(seed)
   my.tsne <- Rtsne(

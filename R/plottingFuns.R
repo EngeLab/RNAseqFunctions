@@ -1,6 +1,6 @@
 #' plotTsne
 #'
-#' Plots tsne with markers.
+#' Plots tsne.
 #'
 #' @name plotTsne
 #' @rdname plotTsne
@@ -24,14 +24,12 @@ NULL
 #' @importFrom rlang .data
 
 plotTsne <- function(tsne, counts.log, markers = NULL, pal = col40()) {
-  
-  if(is.null(markers)) {
-    stop("At least one marker must be provided in the markers argument.")
+
+  if(!is.null(markers)) {
+    names(pal) <- markers
+    pal <- pal[order(names(pal))]
   }
-  
-  names(pal) <- markers
-  pal <- pal[order(names(pal))]
-  
+
   p <- tsne %>%
   matrix_to_tibble(.) %>%
   rename(
@@ -45,13 +43,14 @@ plotTsne <- function(tsne, counts.log, markers = NULL, pal = col40()) {
   ggplot(aes_string(x = '`t-SNE dim 1`', y = '`t-SNE dim 2`')) +
     theme_few() +
     theme(legend.position = "top")
-  
+
   if(is.null(markers)) {
-    return(p)
+    return(p + geom_point())
   } else if(length(markers) == 1) {
     p + geom_point(aes_string(colour = markers)) +
       scale_colour_viridis(option = "E")
   } else {
+
     p + geom_point(colour = "black", shape = 21) +
       geom_point(aes_string(colour = 'Colour'), alpha = .85) +
       scale_colour_identity(
@@ -92,14 +91,14 @@ coloursFromTargets <- function(
   markers,
   ...
 ){
-  
+
   if(is.null(markers) | is.null(pal) | length(markers) == 1) {
     return(tibble('Sample' = colnames(counts)))
   }
 
   markers <- sort(markers)
   pal <- pal[1:length(markers)]
-  
+
   counts[rownames(counts) %in% markers, ] %>%
   matrix_to_tibble(., 'geneName') %>%
   gather('Sample', 'count', -.data$geneName) %>%
@@ -188,11 +187,11 @@ NULL
 #' @importFrom tibble tibble
 
 processMarkers <- function(counts.log, markers) {
-  
+
   if(is.null(markers)) {
     return(tibble(Sample = colnames(counts.log)))
   }
-  
+
   #check that specified markers exist in data
   if(!all(markers %in% rownames(counts.log))) {
     notFound <- markers[!markers %in% rownames(counts.log)]
@@ -200,10 +199,10 @@ processMarkers <- function(counts.log, markers) {
     message <- "These markers were not found in the dataset:"
     stop(paste(message, notFound))
   }
-  
+
   #normalize the marker expression
   markExpress <- t(counts.log[rownames(counts.log) %in% markers, ])
-  
+
   if(length(markers) == 1) {
     markExpressNorm <- matrix(
       normalizeVec(markExpress),
@@ -213,7 +212,7 @@ processMarkers <- function(counts.log, markers) {
   } else {
     markExpressNorm <- apply(markExpress, 2, normalizeVec)
   }
-  
+
   #tidy markers
   matrix_to_tibble(markExpressNorm, rowname = "Sample")
 }
@@ -240,14 +239,84 @@ NULL
 #' @export
 #' @importFrom tibble as_tibble
 
-plotData <-  function(
-  plot,
-  ...
-){
-  if(any(grepl("ggraph", class(plot[[1]])))) {
-    attr(plot[[1]], "graph")
-  } else {
-    as_tibble(plot[[1]]) #have a look at ggplot::fortify -> broom package
-  }
+plotData <-  function(plot, ...){
+  as_tibble(plot[[1]])
 }
 
+#' plotLowQualityCells
+#'
+#' Plots histograms of the two metrics evaluated by the
+#' \code{\link{detectLowQualityCells}} function.
+#'
+#' @name plotLowQualityCells
+#' @rdname plotLowQualityCells
+#' @param counts data.frame; A data frame with counts data with gene names as
+#' rownames and sample names as colnames.
+#' @param mincount numeric; A minimum colSum for which columns with a higher
+#' colSum will be detected. Default = 4e5.
+#' @param geneName character; The gene name to use for the quantile cutoff. This
+#' must be present in the rownames of the counts argument. Default is ACTB.
+#' @param quantileCut numeric; This indicates probability at which the quantile
+#' cutoff will be calculated using the normal distribution. Default = 0.01.
+#' @return A tibble containing the plot data.
+#' @author Jason T. Serviss
+#' @examples
+#' c <- moveGenesToRownames(testingCounts)[1:12, ]
+#' detectLowQualityCells(c, geneName = "ACTB", mincount = 30)
+NULL
+
+#' @rdname plotLowQualityCells
+#' @export
+#' @import ggplot2
+
+plotLowQualityCells <- function(
+  counts,
+  mincount = 4e5,
+  geneName = 'ACTB',
+  quantileCut = 0.01
+) {
+  value <- NULL
+  counts <- .matrixCheckingAndCoercion(counts)
+
+  ##check that geneName is in rownames counts
+  if(!geneName %in% rownames(counts)) {
+    stop("geneName is not found in rownames(counts)")
+  }
+
+  #setup output vector
+  output <- vector(mode = "logical", length = ncol(counts))
+  names(output) <- colnames(counts)
+
+  #colsums check
+  colsums <- colSums(counts)
+  cs <- colsums > mincount
+  output[cs] <- TRUE
+
+  if(sum(cs) < 2) {
+    stop("One or less samples passed the colSums check.")
+  }
+
+  #house keeping check
+  counts.log <- cpm.log2(counts[, cs])
+  cl.act <- counts.log[geneName, ]
+  cl.act.m <- median(cl.act)
+  cl.act.sd <- sqrt(
+    sum((cl.act[cl.act > cl.act.m] - cl.act.m) ^ 2) /
+      (sum(cl.act > cl.act.m) - 1)
+  )
+  my.cut <- qnorm(p = quantileCut, mean = cl.act.m, sd = cl.act.sd)
+  bool <- counts.log[geneName, ] > my.cut
+  output[cs] <- cs[cs] & bool
+
+  p <- data.frame(
+    test = c(rep("Total counts", length(cs)), rep("Quantile cut", length(cl.act))),
+    value = c(colsums, cl.act),
+    decision = c(cs, cl.act > my.cut)
+  ) %>%
+    ggplot() +
+    geom_histogram(aes(value)) +
+    facet_wrap(~test)
+
+  p
+  return(p)
+}

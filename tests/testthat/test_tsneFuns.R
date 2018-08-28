@@ -37,5 +37,4 @@ test_that("check runTsne with expected input", {
   expect_error(runTsne(testingCounts[, -1], is_distance = TRUE, perplexity = 2))
   expect_warning(runTsne(pc, is_distance = FALSE, perplexity = 2))
   expect_error(runTsne(1:10))
-  expect_message(runTsne(testingCounts[, -1], is_distance = FALSE, perplexity = 2))
 })

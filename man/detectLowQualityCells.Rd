@@ -13,7 +13,7 @@ colSum will be detected. Default = 4e5.}
 \item{geneName}{character; The gene name to use for the quantile cutoff. This
 must be present in the rownames of the counts argument. Default is ACTB.}
 
-\item{quantile.cut}{numeric; This indicates probability at which the quantile
+\item{quantileCut}{numeric; This indicates probability at which the quantile
 cutoff will be calculated using the normal distribution. Default = 0.01.}
 }
 \value{
@@ -33,12 +33,8 @@ the expression for the house keeping gene in that sample is greater than the
 quantile.cut argument.
 }
 \examples{
-
-x <- runif(2e4)
-y <- runif(2e4, 1, 100)
-names <- paste0(letters, 1:2e4)
-counts <- data.frame(a = x, b = y, c = y, row.names = names)
-detectLowQualityCells(counts, geneName = "a1")
+c <- moveGenesToRownames(testingCounts)[1:12, ]
+detectLowQualityCells(c, geneName = "ACTB", mincount = 30)
 
 }
 \author{

@@ -256,18 +256,14 @@ detectLowQualityGenes <- function(
 #' colSum will be detected. Default = 4e5.
 #' @param geneName character; The gene name to use for the quantile cutoff. This
 #' must be present in the rownames of the counts argument. Default is ACTB.
-#' @param quantile.cut numeric; This indicates probability at which the quantile
+#' @param quantileCut numeric; This indicates probability at which the quantile
 #' cutoff will be calculated using the normal distribution. Default = 0.01.
 #' @return A logical vector with length = ncol(counts) that is TRUE when the
 #' counts data.frame column contains a sample with colSums > mincount.
 #' @author Jason Serviss
 #' @examples
-#'
-#' x <- runif(2e4)
-#' y <- runif(2e4, 1, 100)
-#' names <- paste0(letters, 1:2e4)
-#' counts <- data.frame(a = x, b = y, c = y, row.names = names)
-#' detectLowQualityCells(counts, geneName = "a1")
+#' c <- moveGenesToRownames(testingCounts)[1:12, ]
+#' detectLowQualityCells(c, geneName = "ACTB", mincount = 30)
 #'
 NULL
 #' @export
@@ -277,8 +273,7 @@ detectLowQualityCells <- function(
   counts,
   mincount = 4e5,
   geneName = 'ACTB',
-  quantileCut = 0.01,
-  plot = FALSE
+  quantileCut = 0.01
 ){
   #input checks
   ##check counts matrix
@@ -294,7 +289,8 @@ detectLowQualityCells <- function(
   names(output) <- colnames(counts)
 
   #colsums check
-  cs <- colSums(counts) > mincount
+  colsums <- colSums(counts)
+  cs <- colsums > mincount
   output[cs] <- TRUE
 
   if(sum(cs) < 2) {
@@ -319,18 +315,6 @@ detectLowQualityCells <- function(
   "%)."
   )
   print(message)
-
-  if(plot) {
-    data.frame(
-      test = rep(c("Total counts", "Quantile cut"), each = length(cs)),
-      value = c(colSums(counts), cl.act),
-      decision = c(cs, cl.act > my.cut)
-    ) %>%
-      ggplot() +
-      geom_histogram(aes(value)) +
-      facet_wrap(~test)
-  }
-
   return(output)
 }
 

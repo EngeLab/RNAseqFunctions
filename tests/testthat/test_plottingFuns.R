@@ -1,0 +1,34 @@
+context("plottingFuns")
+
+test_that("check plotTsne with expected input", {
+  c <- moveGenesToRownames(testingCounts)
+  pc <- pearsonsCor(c[1:12, ])
+  t <- runTsne(pc, perplexity = 3)
+  p1 <- plotTsne(t, cpm.log2(c[1:12, ]))
+  p2 <- plotTsne(t, cpm.log2(c[1:12, ]), "a")
+  p3 <- plotTsne(t, cpm.log2(c[1:12, ]), c("a", "b"))
+  vdiffr::expect_doppelganger("plotTsne_noMarker", p1)
+  vdiffr::expect_doppelganger("plotTsne_singleMarker", p2)
+  vdiffr::expect_doppelganger("plotTsne_multipleMarkers", p3)
+  expect_error(plotTsne(t, cpm.log2(c[1:12, ]), "aaaa"))
+})
+
+test_that("check plotData with expected input", {
+  c <- moveGenesToRownames(testingCounts)
+  pc <- pearsonsCor(c[1:12, ])
+  t <- runTsne(pc, perplexity = 3)
+  p1 <- plotTsne(t, cpm.log2(c[1:12, ]))
+  output <- plotData(p1)
+  expect_identical(output$Sample, paste0(LETTERS[1:11], ".htseq"))
+  expect_identical(colnames(output), c("Sample", "t-SNE dim 1", "t-SNE dim 2"))
+  expect_true(ncol(output) == 3)
+  expect_true(nrow(output) == 11)
+})
+
+test_that("check plotLowQualityCells with expected input", {
+  c <- moveGenesToRownames(testingCounts)
+  p <- plotLowQualityCells(c[1:12, ], geneName = "ACTB", mincount = 30)
+  vdiffr::expect_doppelganger("lowQualityCells", p)
+  expect_error(plotLowQualityCells(c[1:12, ], geneName = "A1", mincount = 30))
+  expect_error(plotLowQualityCells(c[1:12, ], geneName = "ACTB", mincount = 1e5))
+})

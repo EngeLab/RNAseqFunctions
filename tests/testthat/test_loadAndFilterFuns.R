@@ -147,8 +147,8 @@ test_that("check detectLowQualityCells", {
 
   #test
   expect_identical(output, expected)
-  expect_error(expect_message(detectLowQualityCells(input[-1, ], mincount = 30)))
-  expect_error(expect_message(detectLowQualityCells(input[-1, ], mincount = 1e5)))
+  expect_error(expect_message(detectLowQualityCells(input, mincount = 30, geneName = "A1")))
+  expect_error(expect_message(detectLowQualityCells(input, mincount = 1e5)))
 })
 
 test_that("check annotatePlate", {

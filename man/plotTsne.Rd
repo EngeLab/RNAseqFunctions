@@ -20,7 +20,7 @@ rownames(counts.cpm).}
 \item{...}{additional arguments to pass on.}
 }
 \description{
-Plots tsne with markers.
+Plots tsne.
 }
 \author{
 Jason T. Serviss
