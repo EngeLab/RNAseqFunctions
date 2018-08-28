@@ -11,6 +11,7 @@ test_that("check plotTsne with expected input", {
   vdiffr::expect_doppelganger("plotTsne_singleMarker", p2)
   vdiffr::expect_doppelganger("plotTsne_multipleMarkers", p3)
   expect_error(plotTsne(t, cpm.log2(c[1:12, ]), "aaaa"))
+  expect_error(plotTsne(t, cpm.log2(c[1:12, ]), c("b", "aaaa")))
 })
 
 test_that("check plotData with expected input", {
