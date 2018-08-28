@@ -64,7 +64,6 @@ test_that("check .checkNarg with expected input", {
 })
 
 test_that("check .checkNarg with unexpected class", {
-  #test
   expect_error(.checkNarg(matrix(1:10), "A"))
 })
 
@@ -89,6 +88,5 @@ test_that("check .checkNarg with n > nrow(cpm)", {
 ####
 
 test_that("check .has_zero_range with expected input", {
-  #test
-  expect_identical(.has_zero_range(rep(0, 10)))
+  expect_true(.has_zero_range(rep(0, 10)))
 })

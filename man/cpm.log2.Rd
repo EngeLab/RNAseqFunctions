@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalizationFuns.R
 \name{cpm.log2}
 \alias{cpm.log2}
-\title{log.cpm}
+\title{cpm.log2}
 \arguments{
 \item{counts}{matrix; a numeric matrix of counts.}
 }

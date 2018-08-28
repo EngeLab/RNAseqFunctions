@@ -86,10 +86,13 @@ NULL
 #' @importFrom matrixStats rowMeans2 rowSds
 #' @importFrom stats predict
 
-nTopDeltaCV <- function(counts, n) {
-  valid <- matrixStats::rowSums2(counts) > 0
-  mu <- matrixStats::rowMeans2(counts)
-  sd <- matrixStats::rowSds(counts)
+nTopDeltaCV <- function(cpm, n) {
+  cpm <- .matrixCheckingAndCoercion(cpm)
+  n <- .checkNarg(n, cpm)
+
+  valid <- matrixStats::rowSums2(cpm) > 0
+  mu <- matrixStats::rowMeans2(cpm)
+  sd <- matrixStats::rowSds(cpm)
   ok <- mu > 0 & sd > 0
   cv <- sd[ok] / mu[ok]
 
@@ -100,6 +103,6 @@ nTopDeltaCV <- function(counts, n) {
   modelsvm <- svm(log2_cv ~ log2_m, gamma = svr_gamma)
   score <- log2_cv - predict(modelsvm, log2_m)
   score <- score * valid[ok]
-  names(score) <- rownames(counts)[ok]
+  names(score) <- rownames(cpm)[ok]
   sort(score, decreasing = TRUE)[1:n]
 }
