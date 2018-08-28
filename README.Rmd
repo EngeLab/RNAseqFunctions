@@ -9,8 +9,7 @@ Test coverage: [![codecov](https://codecov.io/gh/EngeLab/RNAseqFunctions/branch/
 
 ### Description
 
-A package of RNAseq analysis tools for the Enge lab. See the vignette for 
-explaination of the available functions.
+A package of RNAseq QC and analysis tools for the Enge lab. 
 
 ### Installation
 
@@ -20,4 +19,20 @@ if(!"devtools" %in% rownames(installed.packages())) {
 }
 
 devtools::install_github("martinenge/RNAseqFunctions")
+```
+
+### Vignettes
+
+The vignette for loading and filtering counts data can be viewed in R with the 
+following command:
+
+```{r}
+vignette("loadAndFilterFuns", package = "RNAseqFunctions")
+```
+
+The vignette for running t-SNE and plotting can be viewed in R with the 
+following command:
+
+```{r}
+vignette("tsneAndPlotting", package = "RNAseqFunctions")
 ```
