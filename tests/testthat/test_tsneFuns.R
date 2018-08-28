@@ -34,4 +34,8 @@ test_that("check pearsonsCor with expected input", {
 test_that("check runTsne with expected input", {
   pc <- pearsonsCor(testingCounts[, -1])
   expect_silent(runTsne(pc, perplexity = 2))
+  expect_error(runTsne(testingCounts[, -1], is_distance = TRUE, perplexity = 2))
+  expect_warning(runTsne(pc, is_distance = FALSE, perplexity = 2))
+  expect_error(runTsne(1:10))
+  expect_message(runTsne(testingCounts[, -1], is_distance = FALSE, perplexity = 2))
 })

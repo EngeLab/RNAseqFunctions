@@ -68,14 +68,14 @@ runTsne <- function(
   my.dist, dims = 2, theta = 0, initial_dims = 50, max_iter = 2000,
   perplexity = 10, seed = 11, is_distance = TRUE, ...
 ){
-  if(class(my.dist) != "dist" & !is_distance) {
-    warning("my.dist is not class dist and is_distance is FALSE")
+  if(!is.matrix(my.dist) & class(my.dist) != "dist") {
+    stop("The my.dist arg is not a martix or a dist object.")
+  }
+  if(class(my.dist) == "dist" & !is_distance) {
+    warning("my.dist is class dist and is_distance is FALSE")
   }
   if(is.data.frame(my.dist)) {
     my.dist <- .matrixCheckingAndCoercion(my.dist)
-  }
-  if(!is.matrix(my.dist) & class(my.dist) != "dist") {
-    stop("The my.dist arg is not a martix or a dist object.")
   }
 
   set.seed(seed)

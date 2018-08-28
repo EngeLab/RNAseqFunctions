@@ -8,7 +8,6 @@
   }
   if(is.data.frame(mat) & !all(sapply(mat, is.numeric))) {
     stop("matrix arg is a data frame with non-numeric columns.")
-    mat <- as.matrix(mat)
   }
   return(mat)
 }

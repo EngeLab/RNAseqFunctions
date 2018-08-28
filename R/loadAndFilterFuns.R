@@ -277,7 +277,8 @@ detectLowQualityCells <- function(
   counts,
   mincount = 4e5,
   geneName = 'ACTB',
-  quantileCut = 0.01
+  quantileCut = 0.01,
+  plot = FALSE
 ){
   #input checks
   ##check counts matrix
@@ -318,42 +319,19 @@ detectLowQualityCells <- function(
   "%)."
   )
   print(message)
+
+  if(plot) {
+    data.frame(
+      test = rep(c("Total counts", "Quantile cut"), each = length(cs)),
+      value = c(colSums(counts), cl.act),
+      decision = c(cs, cl.act > my.cut)
+    ) %>%
+      ggplot() +
+      geom_histogram(aes(value)) +
+      facet_wrap(~test)
+  }
+
   return(output)
-}
-
-.plotLowQualityCells <- function(
-  counts,
-  mincount = 4e5,
-  geneName = 'ACTB',
-  quantileCut = 0.01
-){
-  value <- NULL
-  output <- vector(mode = "logical", length = ncol(counts))
-  names(output) <- colnames(counts)
-
-  #colsums check
-  cs <- colSums(counts) > mincount
-  output[cs] <- TRUE
-
-  #house keeping check
-  counts.log <- cpm.log2(counts)
-  cl.act <- counts.log[geneName, ]
-  cl.act.m <- median(cl.act)
-  cl.act.sd <- sqrt(
-    sum((cl.act[cl.act > cl.act.m] - cl.act.m) ^ 2) /
-    (sum(cl.act > cl.act.m) - 1)
-  )
-  my.cut <- qnorm(p = quantileCut, mean = cl.act.m, sd = cl.act.sd)
-  bool <- cl.act > my.cut
-
-  tibble(
-    test = rep(c("Total counts", "Quantile cut"), each = length(cs)),
-    value = c(colSums(counts), cl.act),
-    decision = c(cs, cl.act > my.cut)
-  ) %>%
-    ggplot() +
-    geom_histogram(aes(value)) +
-    facet_wrap(~test)
 }
 
 #' Annotate plate.

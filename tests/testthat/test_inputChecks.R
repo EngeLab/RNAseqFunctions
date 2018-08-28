@@ -35,12 +35,7 @@ test_that("check .matrixCheckingAndCoercion with correct data.frame input", {
 })
 
 test_that("check .matrixCheckingAndCoercion with incorrect data.frame input", {
-
-  #setup input data
-  dat <- data.frame(A = 1:10, B = 1:10, C = LETTERS[1:10])
-
-  #test
-  expect_error(.matrixCheckingAndCoercion(dat))
+  expect_error(.matrixCheckingAndCoercion(data.frame(C = LETTERS[1:10])))
 })
 
 test_that("check .matrixCheckingAndCoercion with unexpected input", {
@@ -93,4 +88,6 @@ test_that("check .checkNarg with n > nrow(cpm)", {
 
 test_that("check .has_zero_range with expected input", {
   expect_true(.has_zero_range(rep(0, 10)))
+  expect_true(.has_zero_range(1))
+  # expect_false(.has_zero_range(1:10))
 })

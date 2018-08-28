@@ -51,6 +51,27 @@ test_that("check removeHTSEQsuffix", {
   expect_error(removeHTSEQsuffix(matrix(1:10)))
   expect_warning(removeHTSEQsuffix(data.frame(1:10, 1:10)))
   expect_warning(removeHTSEQsuffix(data.frame(a = 1:10, b = 1:10)))
+
+  #setup input
+  input <- paste0(LETTERS, ".htseq")
+
+  #setup expected data
+  expected <- LETTERS
+
+  #run function
+  output <- removeHTSEQsuffix(input)
+
+  #test
+  expect_identical(expected, output)
+
+  #test input checks
+  d <- data.frame(A = 1:10, B = 1:10)
+  expect_error(removeHTSEQsuffix(1:10))
+  expect_warning(removeHTSEQsuffix(d))
+  colnames(d) <- NULL
+  expect_error(removeHTSEQsuffix(d))
+  colnames(d) <- paste0("V", 1:ncol(d))
+  expect_warning(removeHTSEQsuffix(d))
 })
 
 test_that("check detectERCCreads", {
@@ -121,10 +142,13 @@ test_that("check detectLowQualityCells", {
   names(expected) <- LETTERS[1:11]
 
   #run function
+  #coerces to matrix from data.frame and gives message
   output <- expect_message(detectLowQualityCells(input, mincount = 30))
 
   #test
   expect_identical(output, expected)
+  expect_error(expect_message(detectLowQualityCells(input[-1, ], mincount = 30)))
+  expect_error(expect_message(detectLowQualityCells(input[-1, ], mincount = 1e5)))
 })
 
 test_that("check annotatePlate", {
