@@ -301,7 +301,7 @@ detectLowQualityCells <- function(
   }
 
   #house keeping check
-  counts.log <- log.cpm(counts[, cs])
+  counts.log <- cpm.log2(counts[, cs])
   cl.act <- counts.log[geneName, ]
   cl.act.m <- median(cl.act)
   cl.act.sd <- sqrt(
@@ -327,6 +327,7 @@ detectLowQualityCells <- function(
   geneName = 'ACTB',
   quantileCut = 0.01
 ){
+  value <- NULL
   output <- vector(mode = "logical", length = ncol(counts))
   names(output) <- colnames(counts)
 
@@ -335,7 +336,7 @@ detectLowQualityCells <- function(
   output[cs] <- TRUE
 
   #house keeping check
-  counts.log <- norm.log.counts(counts)
+  counts.log <- cpm.log2(counts)
   cl.act <- counts.log[geneName, ]
   cl.act.m <- median(cl.act)
   cl.act.sd <- sqrt(
@@ -399,6 +400,7 @@ NULL
 #' @importFrom stringr str_replace
 
 annotateRow <- function(data) {
+  rowPos <- NULL
   data %>%
   mutate(rowPos = str_replace(sample, "^.\\.[A-Z0-9]*\\.(.)..", "\\1")) %>%
   mutate(row = match(rowPos, LETTERS[1:8])) %>%
@@ -426,6 +428,7 @@ NULL
 #' @importFrom stringr str_replace
 
 annotateColumn <- function(data) {
+  colPos <- NULL
   data %>%
   mutate(colPos = str_replace(sample, "^.\\.[A-Z0-9]*\\..(..)", "\\1")) %>%
   mutate(column = case_when(

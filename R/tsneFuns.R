@@ -13,6 +13,7 @@
 #'
 #'
 #' @export
+#' @importFrom stats as.dist cor
 NULL
 
 pearsonsCor <- function(cpm, select = NULL) {
@@ -72,12 +73,12 @@ runTsne <- function(
   ...
 ){
   set.seed(seed)
-  
+
   my.tsne <- Rtsne(
     my.dist, dims = dims, initial_dims = initial_dims, max_iter = max_iter,
     perplexity = perplexity, theta = theta, is_distance = is_distance
   )$Y
-  
+
   rownames(my.tsne) <- attr(my.dist, "Labels")
   return(my.tsne)
 }
