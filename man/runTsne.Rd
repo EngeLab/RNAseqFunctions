@@ -9,43 +9,44 @@ runTsne(my.dist, dims = 2, theta = 0, initial_dims = 50,
   ...)
 }
 \arguments{
-\item{my.dist}{A distance object typically produced with
-the \code{\link{pearsonsCor}} function.}
+\item{my.dist}{dist; Typically produced with the \code{\link{pearsonsCor}}
+function.}
 
-\item{dims}{Argument to Rtsne. Numeric indicating the output dimensions.}
+\item{dims}{integer; Argument to \code{\link[Rtsne]{Rtsne}}.
+Output dimensionality (default: 2)}
 
-\item{theta}{Argument to
-[Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).}
+\item{theta}{numeric; Argument to \code{\link[Rtsne]{Rtsne}}. Speed/accuracy
+trade-off (increase for less accuracy), set to 0.0 for exact TSNE
+(default: 0)}
 
-\item{initial_dims}{Argument to
-[Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).}
+\item{initial_dims}{integer; Argument to \code{\link[Rtsne]{Rtsne}}. The
+number of dimensions that should be retained in the initial PCA step
+(default: 50)}
 
-\item{max_iter}{Argument to
-[Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).}
+\item{max_iter}{integer; Argument to \code{\link[Rtsne]{Rtsne}}. Number of
+iterations (default: 2000)}
 
-\item{perplexity}{Argument to
-[Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).}
+\item{perplexity}{numeric; Argument to \code{\link[Rtsne]{Rtsne}}. Perplexity
+parameter (should not be bigger than 3 * perplexity < nrow(X) - 1).
+(default = 10)}
 
 \item{seed}{The desired seed to set before running.}
 
-\item{is_distance}{Argument to
-[Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html).}
+\item{is_distance}{logical; Argument to \code{\link[Rtsne]{Rtsne}}. Indicate
+whether X is a distance matrix (default = TRUE).}
 
 \item{...}{Additional arguments to pass on}
 }
 \value{
-A matrix containing the mean value for each gene for each
-   classification group.
+Matrix containing the new representations for the objects.
 }
 \description{
-Calculates the x and y coordinates of the mean of each classified group.
-}
-\details{
-This method runs t-SNE based on an input of 1-Pearson's correlation.
+This method runs t-SNE based on an input of 1-Pearson's correlation. Uses
+the \code{\link[Rtsne]{Rtsne}} function from the Rtsne package.
 }
 \examples{
-#
-
+pc <- pearsonsCor(testingCounts[, -1])
+t <- runTsne(pc, perplexity = 2)
 
 }
 \author{

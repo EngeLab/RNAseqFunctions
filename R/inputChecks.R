@@ -1,4 +1,7 @@
 .matrixCheckingAndCoercion <- function(mat) {
+  if(!is.data.frame(mat) & !is.matrix(mat)) {
+    stop("matrix arg is not a matrix or a data.frame.")
+  }
   if(is.data.frame(mat) & all(sapply(mat, is.numeric))) {
     message("Coercing data.frame to matrix.")
     mat <- as.matrix(mat)

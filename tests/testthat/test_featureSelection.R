@@ -47,3 +47,23 @@ test_that("check nTopMax with expected input", {
   expect_identical(expected, output)
 })
 
+test_that("check nTopDeltaCV with expected input", {
+
+  #setup input data
+  set.seed(934)
+  mat <- matrix(
+    sample(1:100, 10),
+    ncol = 2,
+    dimnames = list( LETTERS[1:5], NULL)
+  )
+
+  #setup expected data
+  expected <- c("E", "C")
+
+  #run function
+  output <- nTopDeltaCV(mat, 2)
+
+  #test
+  expect_identical(expected, names(output))
+})
+

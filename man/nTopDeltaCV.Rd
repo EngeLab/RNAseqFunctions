@@ -14,7 +14,8 @@ coefficient of variation (CV) as a function of the mean, and selecting genes
 having the greatest offset from the fitted curve; this would correspond to
 genes with higher-than-expected variance. Adpoted from Linnarsson lab python
 implementation:
-https://github.com/linnarsson-lab/cytograph/blob/master/cytograph/feature_selection.py
+https://github.com/linnarsson-lab/cytograph/blob/master/cytograph/feature_selection.py.
+Note this displays a rendency to prioritize lowly expressed genes.
 }
 \author{
 Jason T. Serviss

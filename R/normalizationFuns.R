@@ -56,5 +56,6 @@ cpm.log2 <- function(counts) {
 #' @export
 
 normalizeVec <- function(vec) {
+  if(!is.numeric(vec)) stop("The input vector is not numeric.")
   (vec - min(vec)) / (max(vec) - min(vec))
 }

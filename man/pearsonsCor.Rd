@@ -12,6 +12,10 @@
 Calculates 1-Pearson's correlation between columns and returns results as a
 dist object.
 }
+\examples{
+pearsonsCor(testingCounts[, -1])
+
+}
 \author{
 Jason T. Serviss
 }

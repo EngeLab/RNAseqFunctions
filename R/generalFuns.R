@@ -17,7 +17,7 @@
 
 namedListToTibble <- function(l) {
   if (length(names(l)) != length(l)) {
-    stop("The list you submitted might not be named.")
+    stop("The list you submitted is not named.")
   }
   if (!is.null(names(l[[1]]))) {
     ni <- gsub(".*\\.(.*)$", "\\1", names(unlist(l)))
@@ -39,6 +39,8 @@ namedListToTibble <- function(l) {
 #' @param data matrix; The matrix to be converted.
 #' @param rowname character; Length 1 vector indicating the colname that
 #'  rownames should have upon tibble conversion.
+#' @param drop logical; indicated if rownames should be dropped.
+#'  Default = FALSE.
 #' @keywords matrix_to_tibble
 #' @examples
 #'
@@ -48,9 +50,17 @@ namedListToTibble <- function(l) {
 #' @export
 #' @importFrom tibble as_tibble rownames_to_column
 
-matrix_to_tibble <- function(data, rowname = "rowname") {
+matrix_to_tibble <- function(data, rowname = "rowname", drop = FALSE) {
+  if(!is.matrix(data)) stop("The 'data' argument is not a matrix")
+  if(drop) as_tibble(data)
+  rn.quo <- enquo(rowname)
+  rn <- rownames(data)
+  if(is.null(rn)) rn <- 1:nrow(data)
+
+  rownames(data) <- NULL
+
   data %>%
-  as.data.frame() %>%
-  rownames_to_column(var = rowname) %>%
-  as_tibble()
+    as.data.frame(stringsAsFactors = FALSE) %>%
+    add_column(!! quo_name(rn.quo) := rn, .before = 1) %>%
+    as_tibble()
 }

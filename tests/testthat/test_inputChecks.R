@@ -43,6 +43,10 @@ test_that("check .matrixCheckingAndCoercion with incorrect data.frame input", {
   expect_error(.matrixCheckingAndCoercion(dat))
 })
 
+test_that("check .matrixCheckingAndCoercion with unexpected input", {
+  expect_error(.matrixCheckingAndCoercion(1:10))
+})
+
 ####
 #.checkNarg
 ####
