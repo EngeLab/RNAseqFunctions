@@ -145,11 +145,11 @@ detectERCCreads <- function(counts, regex = "^ERCC\\-[0-9]*$", warn = TRUE) {
     stop(m)
   }
   ercc <- grepl(regex, rownames(counts))
-  
+
   if(sum(ercc) != 92 & warn) {
     warning("Couldn't detect all ERCC reads.")
   }
-  
+
   return(ercc)
 }
 
@@ -184,7 +184,7 @@ detectNonGenes <- function(counts) {
     m <- "rownames(counts) = 1:nrow(counts). Are gene names in rownames counts?"
     stop(m)
   }
-  
+
   nonGenes <- c(
     "__no_feature", "__ambiguous", "__too_low_aQual",
     "__not_aligned", "__alignment_not_unique"
@@ -224,9 +224,8 @@ detectLowQualityGenes <- function(
   mincount = 0
 ){
   #input checks
-  
+
   bool <- rowSums(counts) > mincount
-  
   message <- paste0(
     "Detected ", sum(!bool), " low quality genes out of ", nrow(counts),
     " genes input (", round(100 * (sum(!bool) / nrow(counts)), digits = 2),
@@ -281,23 +280,26 @@ detectLowQualityCells <- function(
   quantileCut = 0.01
 ){
   #input checks
+  ##check counts matrix
+  counts <- .matrixCheckingAndCoercion(counts)
+
   ##check that geneName is in rownames counts
   if(!geneName %in% rownames(counts)) {
     stop("geneName is not found in rownames(counts)")
   }
-  
+
   #setup output vector
   output <- vector(mode = "logical", length = ncol(counts))
   names(output) <- colnames(counts)
-  
+
   #colsums check
   cs <- colSums(counts) > mincount
   output[cs] <- TRUE
-  
+
   if(sum(cs) < 2) {
     stop("One or less samples passed the colSums check.")
   }
-  
+
   #house keeping check
   counts.log <- log.cpm(counts[, cs])
   cl.act <- counts.log[geneName, ]
@@ -309,7 +311,7 @@ detectLowQualityCells <- function(
   my.cut <- qnorm(p = quantileCut, mean = cl.act.m, sd = cl.act.sd)
   bool <- counts.log[geneName, ] > my.cut
   output[cs] <- cs[cs] & bool
-  
+
   message <- paste0(
   "Detected ", sum(!output), " low quality cells out of ", ncol(counts),
   " cells input (", round(100 * (sum(!output) / ncol(counts)), digits = 2),
@@ -327,11 +329,11 @@ detectLowQualityCells <- function(
 ){
   output <- vector(mode = "logical", length = ncol(counts))
   names(output) <- colnames(counts)
-  
+
   #colsums check
   cs <- colSums(counts) > mincount
   output[cs] <- TRUE
-  
+
   #house keeping check
   counts.log <- norm.log.counts(counts)
   cl.act <- counts.log[geneName, ]
@@ -342,7 +344,7 @@ detectLowQualityCells <- function(
   )
   my.cut <- qnorm(p = quantileCut, mean = cl.act.m, sd = cl.act.sd)
   bool <- cl.act > my.cut
-  
+
   tibble(
     test = rep(c("Total counts", "Quantile cut"), each = length(cs)),
     value = c(colSums(counts), cl.act),

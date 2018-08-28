@@ -15,6 +15,7 @@ NULL
 #' @importFrom matrixStats colSums2
 
 cpm <- function(counts) {
+  counts <- .matrixCheckingAndCoercion(counts)
   t(t(counts) / matrixStats::colSums2(counts) * 10^6)
 }
 
@@ -35,6 +36,7 @@ NULL
 #' @importFrom matrixStats colSums2
 
 log.cpm <- function(counts) {
+  counts <- .matrixCheckingAndCoercion(counts)
   log2(t(t(counts) / matrixStats::colSums2(counts) * 10^6) + 1)
 }
 

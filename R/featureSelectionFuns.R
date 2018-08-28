@@ -1,3 +1,4 @@
+
 #' nTopVar
 #'
 #' Facilitates gene selection using variance.
@@ -23,8 +24,10 @@ NULL
 #' @export
 
 nTopVar <- function(cpm, n) {
-  n <- min(n, dim(cpm)[1])
-  rv = rowVars(cpm)
+  cpm <- .matrixCheckingAndCoercion(cpm)
+  n <- .checkNarg(n, cpm)
+  rv = matrixStats::rowVars(cpm)
+  .check0range(rv)
   order(rv, decreasing = TRUE)[1:n]
 }
 
@@ -51,8 +54,10 @@ NULL
 #' @export
 
 nTopMax <- function(cpm, n) {
-  n <- min(n, dim(cpm)[1])
+  cpm <- .matrixCheckingAndCoercion(cpm)
+  n <- .checkNarg(n, cpm)
   rv <- apply(cpm, 1, max)
+  .check0range(rv)
   select <- order(rv, decreasing = TRUE)[1:n]
   return(select)
 }
@@ -86,10 +91,10 @@ nTopDeltaCV <- function(counts, n) {
   sd <- matrixStats::rowSds(counts)
   ok <- mu > 0 & sd > 0
   cv <- sd[ok] / mu[ok]
-  
+
   log2_m <- log2(mu[ok])
   log2_cv <- log2(cv)
-  
+
   svr_gamma <- 1000 / length(mu[ok])
   modelsvm <- svm(log2_cv ~ log2_m, gamma = svr_gamma)
   score <- log2_cv - predict(modelsvm, log2_m)
