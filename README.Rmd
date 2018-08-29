@@ -26,13 +26,13 @@ devtools::install_github("martinenge/RNAseqFunctions")
 The vignette for loading and filtering counts data can be viewed in R with the 
 following command:
 
-```{r}
+```{r, eval = FALSE}
 vignette("loadAndFilterFuns", package = "RNAseqFunctions")
 ```
 
 The vignette for running t-SNE and plotting can be viewed in R with the 
 following command:
 
-```{r}
+```{r, eval = FALSE}
 vignette("tsneAndPlotting", package = "RNAseqFunctions")
 ```

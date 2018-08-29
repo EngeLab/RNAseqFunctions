@@ -30,8 +30,6 @@ with the following command:
 vignette("loadAndFilterFuns", package = "RNAseqFunctions")
 ```
 
-    ## starting httpd help server ... done
-
 The vignette for running t-SNE and plotting can be viewed in R with the
 following command:
 
