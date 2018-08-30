@@ -12,6 +12,7 @@
 #' @aliases nTopVar
 #' @param cpm matrix; Matrix containing cpm values.
 #' @param n Number of genes to select.
+#' @param safe logical; Should input and output checks be on?
 #' @return A numeric vector containing the indices of selected genes.
 #' @author Jason T. Serviss
 #' @keywords nTopVar
@@ -23,11 +24,13 @@ NULL
 #' @importFrom matrixStats rowVars
 #' @export
 
-nTopVar <- function(cpm, n) {
-  cpm <- .matrixCheckingAndCoercion(cpm)
-  n <- .checkNarg(n, cpm)
+nTopVar <- function(cpm, n, safe = TRUE) {
+  if(safe) {
+    cpm <- .matrixCheckingAndCoercion(cpm)
+    n <- .checkNarg(n, cpm)
+  }
   rv = matrixStats::rowVars(cpm)
-  .check0range(rv)
+  if(safe) .check0range(rv)
   order(rv, decreasing = TRUE)[1:n]
 }
 
@@ -43,7 +46,8 @@ nTopVar <- function(cpm, n) {
 #' @rdname nTopMax
 #' @aliases nTopMax
 #' @param cpm matrix; Matrix containing cpm values.
-#' @param n Number of genes to select.
+#' @param n integer; Number of genes to select.
+#' @param safe logical; Should input and output checks be on?
 #' @return A numeric vector containing the indices of selected genes.
 #' @author Jason T. Serviss
 #' @keywords nTopMax
@@ -51,15 +55,17 @@ nTopVar <- function(cpm, n) {
 NULL
 
 #' @rdname nTopMax
+#' @importFrom matrixStats rowMaxs
 #' @export
 
-nTopMax <- function(cpm, n) {
-  cpm <- .matrixCheckingAndCoercion(cpm)
-  n <- .checkNarg(n, cpm)
-  rv <- apply(cpm, 1, max)
-  .check0range(rv)
-  select <- order(rv, decreasing = TRUE)[1:n]
-  return(select)
+nTopMax <- function(cpm, n, safe = TRUE) {
+  if(safe) {
+    cpm <- .matrixCheckingAndCoercion(cpm)
+    n <- .checkNarg(n, cpm)
+  }
+  rv <- matrixStats::rowMaxs(cpm)
+  if(safe) .check0range(rv)
+  order(rv, decreasing = TRUE)[1:n]
 }
 
 #' nTopDeltaCV
