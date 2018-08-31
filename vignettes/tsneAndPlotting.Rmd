@@ -106,7 +106,7 @@ plot the t-SNE results without the addition of any other variables to view the
 separations.
 
 ```{r, fig.align="center", fig.width=6, fig.height=6}
-plotTsne(tsne, cpm.log2(counts.cpm))
+plotTsne(tsne, log2cpm(counts.cpm))
 ```
 <br></br>
 
@@ -114,7 +114,7 @@ We can also add marker gene expression onto the t-SNE plot to see which
 population(s) of cells express a specific marker.
 
 ```{r, fig.align="center", fig.width=6, fig.height=6}
-plotTsne(tsne, cpm.log2(counts.cpm), "CD74")
+plotTsne(tsne, log2cpm(counts.cpm), "CD74")
 ```
 <br></br>
 
@@ -122,7 +122,7 @@ We can also provide additional marker genes (typically one per cell type) to
 visualize their expression.
 
 ```{r, fig.align="center", fig.width=6, fig.height=6}
-plotTsne(tsne, cpm.log2(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
+plotTsne(tsne, log2cpm(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
 ```
 <br></br>
 
@@ -130,7 +130,7 @@ Finally, it may be desired to get back the data used for plotting in order to
 modify or customize a plot. This can be achieved using the following function:
 
 ```{r}
-p <- plotTsne(tsne, cpm.log2(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
+p <- plotTsne(tsne, log2cpm(counts.cpm), c("CD74", "ANXA3", "ACTG2"))
 plotData(p)
 ```
 
