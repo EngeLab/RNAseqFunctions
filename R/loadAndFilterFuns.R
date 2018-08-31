@@ -298,7 +298,7 @@ detectLowQualityCells <- function(
   }
 
   #house keeping check
-  counts.log <- cpm.log2(counts[, cs])
+  counts.log <- log2cpm(counts[, cs])
   cl.act <- counts.log[geneName, ]
   cl.act.m <- median(cl.act)
   cl.act.sd <- sqrt(

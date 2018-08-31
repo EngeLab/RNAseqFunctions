@@ -6,7 +6,7 @@ test_that("check cpm with expected input", {
   mat <- matrix(rep(c(1e6, 1e7), each = 5), ncol = 2)
 
   #setup expected data
-  expected <- matrix(rep(2e5, 10), ncol = 2)
+  expected <- t(t(mat) / colSums(mat) * 10^6)
 
   #run function
   output <- cpm(mat)
@@ -15,16 +15,16 @@ test_that("check cpm with expected input", {
   expect_identical(expected, output)
 })
 
-test_that("check cpm.log2 with expected input", {
+test_that("check log2cpm with expected input", {
 
   #setup normal input data
   mat <- matrix(rep(c(1e6, 1e7), each = 5), ncol = 2)
 
   #setup expected data
-  expected <- log2(cpm(mat) + 1)
+  expected <- log2(t(t(mat) / colSums(mat) * 10^6) + 1)
 
   #run function
-  output <- cpm.log2(mat)
+  output <- log2cpm(mat)
 
   #test
   expect_identical(expected, output)

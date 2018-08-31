@@ -9,6 +9,7 @@ Author: Martin Enge [aut, cre],
   Jason T. Serviss [aut]
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.0)
+LinkingTo: Rcpp, RcppEigen
 Imports:
   grDevices,
   tsne,

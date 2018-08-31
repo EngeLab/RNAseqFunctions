@@ -4,12 +4,14 @@
 \alias{nTopVar}
 \title{nTopVar}
 \usage{
-nTopVar(cpm, n)
+nTopVar(cpm, n, safe = TRUE)
 }
 \arguments{
 \item{cpm}{matrix; Matrix containing cpm values.}
 
 \item{n}{Number of genes to select.}
+
+\item{safe}{logical; Should input and output checks be on?}
 }
 \value{
 A numeric vector containing the indices of selected genes.

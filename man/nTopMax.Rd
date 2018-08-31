@@ -4,12 +4,14 @@
 \alias{nTopMax}
 \title{nTopMax}
 \usage{
-nTopMax(cpm, n)
+nTopMax(cpm, n, safe = TRUE)
 }
 \arguments{
 \item{cpm}{matrix; Matrix containing cpm values.}
 
-\item{n}{Number of genes to select.}
+\item{n}{integer; Number of genes to select.}
+
+\item{safe}{logical; Should input and output checks be on?}
 }
 \value{
 A numeric vector containing the indices of selected genes.
