@@ -9,8 +9,6 @@
 #' @param counts matrix; a numeric matrix of counts.
 #' @return A matrix of cpm values.
 #' @author Jason T. Serviss
-NULL
-
 #' @export
 
 cpm <- function(counts) {
@@ -32,8 +30,6 @@ cpm <- function(counts) {
 #' @param counts matrix; a numeric matrix of counts.
 #' @return A matrix of log2 cpm values.
 #' @author Jason T. Serviss
-NULL
-
 #' @export
 
 log2cpm <- function(counts) {

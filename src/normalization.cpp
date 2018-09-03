@@ -7,14 +7,15 @@
 
 using namespace Rcpp;
 
-//' cpm
+//' eigen_cpm
 //'
 //' Calculates counts per million (cpm) using a gene expression counts matrix
 //' as input.
 //'
-//' @name cpm
-//' @rdname cpm
-//' @aliases cpm
+//' @name eigen_cpm
+//' @rdname eigen_cpm
+//' @keywords internal
+//' @aliases eigen_cpm
 //' @param counts matrix; a numeric matrix of counts.
 //' @return A matrix of cpm values.
 //' @author Jason T. Serviss
@@ -35,14 +36,15 @@ Eigen::MatrixXd eigen_cpm(Eigen::MatrixXd counts){
   return(cpm);
 }
 
-//' log2cpm
+//' eigen_log2cpm
 //'
 //' Calculates log2 counts per million (cpm) using a gene expression counts
 //' matrix as input.
 //'
-//' @name log2cpm
-//' @rdname log2cpm
-//' @aliases log2cpm
+//' @name eigen_log2cpm
+//' @rdname eigen_log2cpm
+//' @keywords internal
+//' @aliases eigen_log2cpm
 //' @param counts matrix; a numeric matrix of counts.
 //' @return A matrix of log2(cpm + 1) values.
 //' @author Jason T. Serviss
