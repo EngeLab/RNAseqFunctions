@@ -2,7 +2,7 @@ RNAseqFunctions
 ================
 
 Build:
-<a href="https://travis-ci.org/EngeLab/sp.RNAseqFunctions"><img src="https://travis-ci.org/EngeLab/RNAseqFunctions.svg?branch=master"></a>
+<a href="https://travis-ci.org/EngeLab/sRNAseqFunctions"><img src="https://travis-ci.org/EngeLab/RNAseqFunctions.svg?branch=master"></a>
 
 Test coverage:
 [![codecov](https://codecov.io/gh/EngeLab/RNAseqFunctions/branch/master/graph/badge.svg)](https://codecov.io/gh/EngeLab/RNAseqFunctions)
@@ -18,7 +18,7 @@ if(!"devtools" %in% rownames(installed.packages())) {
     install.packages("devtools")
 }
 
-devtools::install_github("martinenge/RNAseqFunctions")
+devtools::install_github("EngeLab/RNAseqFunctions")
 ```
 
 ### Vignettes
