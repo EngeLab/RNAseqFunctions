@@ -22,7 +22,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-Eigen::MatrixXd eigen_cpm(Eigen::MatrixXd counts){
+Eigen::MatrixXd eigen_cpm(const Eigen::MatrixXd counts){
   int nr = counts.rows();
   int nc = counts.cols();
   Eigen::MatrixXd cpm(nr, nc);

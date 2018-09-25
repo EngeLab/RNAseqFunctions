@@ -22,6 +22,7 @@ NULL
 #' @rdname nTopVar
 #' @importFrom stats var
 #' @importFrom matrixStats rowVars
+#' @importFrom Rfast Order
 #' @export
 
 nTopVar <- function(cpm, n, safe = TRUE) {
@@ -31,7 +32,7 @@ nTopVar <- function(cpm, n, safe = TRUE) {
   }
   rv = matrixStats::rowVars(cpm)
   if(safe) .check0range(rv)
-  order(rv, decreasing = TRUE)[1:n]
+  Order(rv, descending = TRUE, stable = TRUE)[1:n]
 }
 
 #' nTopMax
@@ -56,6 +57,7 @@ NULL
 
 #' @rdname nTopMax
 #' @importFrom matrixStats rowMaxs
+#' @importFrom Rfast Order
 #' @export
 
 nTopMax <- function(cpm, n, safe = TRUE) {
@@ -65,7 +67,7 @@ nTopMax <- function(cpm, n, safe = TRUE) {
   }
   rv <- matrixStats::rowMaxs(cpm)
   if(safe) .check0range(rv)
-  order(rv, decreasing = TRUE)[1:n]
+  Order(rv, descending = TRUE, stable = TRUE)[1:n]
 }
 
 #' nTopDeltaCV
